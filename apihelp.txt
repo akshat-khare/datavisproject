@@ -1,0 +1,99 @@
+akshat@akshat-VirtualBox:~$ ssh baadalvm@10.17.8.12
+The authenticity of host '10.17.8.12 (10.17.8.12)' can't be established.
+ECDSA key fingerprint is SHA256:flXpoqQLRRqm7gv6zLMe/IY3JUwtRbjmUnHF+31rY5k.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '10.17.8.12' (ECDSA) to the list of known hosts.
+baadalvm@10.17.8.12's password: 
+Welcome to Ubuntu 16.04.5 LTS (GNU/Linux 4.4.0-22-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+34 packages can be updated.
+10 updates are security updates.
+
+*** System restart required ***
+Last login: Sun Sep  9 21:31:36 2018 from 10.184.17.170
+baadalvm@baadalvm:~$ ls
+2015CS10202_2015CS10204_2015CS10217  Pictures
+anaconda3                            _proxy.out
+Dependencies                         proxy.sh
+Desktop                              Public
+Documents                            Templates
+Downloads                            UnsupervisedMT-master
+examples.desktop                     UnsupervisedMT-master.zip
+Music                                Videos
+baadalvm@baadalvm:~$ ./proxy.sh 
+*****Trying to Login to IITD Proxy Server******
+baadalvm@baadalvm:~$ 
+Login Already
+
+baadalvm@baadalvm:~$ cd Desktop/
+baadalvm@baadalvm:~/Desktop$ ls
+Dependencies  TwitterAnalytics
+baadalvm@baadalvm:~/Desktop$ cd TwitterAnalytics/
+baadalvm@baadalvm:~/Desktop/TwitterAnalytics$ ls
+Basic Neo4j Material  Ingestion          Read Twitter Stream
+Benchmarking          Kafka              remaining.txt
+Dashboard_Website     NLP on Tweets      requirements_conda.txt
+data                  notes.txt          requirements_pip_1 .txt
+Documentation         Query Gen Website  requirements_pip.txt
+Graphs                readme.md
+baadalvm@baadalvm:~/Desktop/TwitterAnalytics$ cd Dashboard_Website/
+baadalvm@baadalvm:~/Desktop/TwitterAnalytics/Dashboard_Website$ ls
+db.sqlite3      example_files  myapp      requirements.txt  templates
+debug_logs.txt  manage.py      myproject  static
+baadalvm@baadalvm:~/Desktop/TwitterAnalytics/Dashboard_Website$ python manage.py runserver 0.0.0.0:8080
+Performing system checks...
+
+^Cbaadalvm@baadalvm:~/Desktop/TwitterAnalytics/Dashboard_Website$ python manage. runserver 0.0.0.0:8080
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 09, 2018 - 16:12:26
+Django version 1.10, using settings 'myproject.settings'
+Starting development server at http://0.0.0.0:8080/
+Quit the server with CONTROL-C.
+[09/Sep/2018 16:13:40] "GET / HTTP/1.1" 302 0
+[09/Sep/2018 16:13:40] "GET /hashtags/ HTTP/1.1" 200 13027
+[09/Sep/2018 16:13:40] "GET /static/material/fonts/material-design-icons/material-icons.css HTTP/1.1" 200 970
+[09/Sep/2018 16:13:40] "GET /static/material/css/jquery.datetimepicker.css HTTP/1.1" 200 18987
+[09/Sep/2018 16:13:40] "GET /static/material/css/materialize.forms.css HTTP/1.1" 200 3121
+[09/Sep/2018 16:13:40] "GET /static/material/fonts/roboto/style.css HTTP/1.1" 200 5045
+[09/Sep/2018 16:13:40] "GET /static/material/js/jquery.js HTTP/1.1" 200 268039
+[09/Sep/2018 16:13:40] "GET /static/material/js/jquery.datetimepicker.full.js HTTP/1.1" 200 108119
+[09/Sep/2018 16:13:40] "GET /static/material/js/jquery.formset.js HTTP/1.1" 200 8479
+[09/Sep/2018 16:13:40] "GET /static/material/js/materialize.forms.js HTTP/1.1" 200 2053
+[09/Sep/2018 16:13:40] "GET /static/material/css/materialize.css HTTP/1.1" 200 180888
+[09/Sep/2018 16:13:40] "GET /static/material/js/materialize.js HTTP/1.1" 200 355068
+[09/Sep/2018 16:13:42] "GET /static/material/fonts/roboto/fonts/Roboto-Regular.woff2 HTTP/1.1" 200 66016
+Not Found: /favicon.ico
+[09/Sep/2018 16:13:42] "GET /favicon.ico HTTP/1.1" 404 8518
+2017-09-06 21:43:52+00:00 2018-09-09 21:44:08+00:00
+[09/Sep/2018 16:14:09] "POST /hashtags/hashtag_top10_getter/ HTTP/1.1" 200 1034
+[09/Sep/2018 16:15:21] "GET /hashtags/ HTTP/1.1" 200 13027
+2016-09-14 21:45:41+00:00 2018-09-09 21:45:53+00:00
+[09/Sep/2018 16:15:53] "POST /hashtags/hashtag_top10_getter/ HTTP/1.1" 200 1034
+^Cbaadalvm@baadalvm:~/Desktop/TwitterAnalytics/Dashboard_Website$ ls
+db.sqlite3      example_files  myapp      requirements.txt  templates
+debug_logs.txt  manage.py      myproject  static
+baadalvm@baadalvm:~/Desktop/TwitterAnalytics/Dashboard_Website$ cd myapp/
+baadalvm@baadalvm:~/Desktop/TwitterAnalytics/Dashboard_Website/myapp$ ls
+admin.py      debug_logs.txt  input_graph.txt  most_active_users.py  top10.py
+airflow       delete_dag.py   migrations       neo4j                 urls.py
+apps.py       flink           models.py        __pycache__           views.py
+chemistry.py  forms.py        mongo            tables.py
+dag           __init__.py     mongo_alert.py   tests.py
+baadalvm@baadalvm:~/Desktop/TwitterAnalytics/Dashboard_Website/myapp$ cd mongo/
+baadalvm@baadalvm:~/Desktop/TwitterAnalytics/Dashboard_Website/myapp/mongo$ ls
+debug_logs.txt      negative-words.txt  __pycache__
+execute_queries.py  positive-words.txt
+baadalvm@baadalvm:~/Desktop/TwitterAnalytics/Dashboard_Website/myapp/mongo$ python execute_queries.py 
+{'hashtag': ['MMVAs', 'FFGroupBTS', 'iHeartRadioMMVAs', '레드벨벳나왔잖아_파워업보러가자', 'RedVelvet', '레드벨벳', 'NCT', '파도춤', 'PowerUp', 'CHANYEOL'], 'count': [3, 3, 2, 2, 2, 2, 2, 2, 2, 2]}
+{'userId': [335141638, 873092428755894272, 1562201468, 4811011050, 45709328, 159041608, 2162416903, 880208552668913665, 911572149315313664, 929342634778247168], 'count': [4, 3, 2, 2, 2, 2, 2, 1, 1, 1]}
+{'hashtag': [], 'count': []}
+{'timestamps': []}
+{'timestamps': [], 'positive_sentiment': [], 'negative_sentiment': []}
+baadalvm@baadalvm:~/Desktop/TwitterAnalytics/Dashboard_Website/myapp/mongo$ 
+

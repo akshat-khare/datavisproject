@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Generating queries in mongoDB &mdash; Twitter Analytics 0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/jquery-ui/jquery-ui.min.css" type="text/css" />
+  
+    <link rel="stylesheet" href="_static/css/t3more.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Twitter Analytics 0.1 documentation" href="#"/>
+        <link rel="next" title="About Post processing functions" href="postprocessing.html"/>
+        <link rel="prev" title="Neo4j: API to generate cypher queries" href="neo4j_query_generation.html"/> 
+  <script src="_static/js/modernizr.min.js"></script>
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        <ul class="sidebartop">
+
+          <li class="docsite">
+            <a href="https://docs.typo3.org"><img src="_static/img/typo3-documentation.png" class="logo" /></a>
+          </li>
+
+          <li class="project">
+            <a href="index.html">
+              Twitter Analytics<br>0.1</a>
+          </li><li class="nolink search">
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search this project" id="searchinput" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div></li>
+
+        </ul>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction to twitter analytics system</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#major-parts-of-the-system">Major parts of the system</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="twitter_stream.html">Read data from Twitter API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="twitter_stream.html#user-timeline-api">User Timeline API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="twitter_stream.html#stream-sample-api">Stream Sample API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="twitter_stream.html#user-timeline-api-code-documentation">User Timeline API Code Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="twitter_stream.html#stream-sample-api-code-documentation">Stream Sample API Code Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="neo4j_data_ingestion.html">Ingesting data into Neo4j</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="neo4j_data_ingestion.html#data-stored-in-neo4j">Data stored in neo4j</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="neo4j_data_ingestion.html#user-network">User network</a></li>
+<li class="toctree-l3"><a class="reference internal" href="neo4j_data_ingestion.html#tweet-network">Tweet network</a></li>
+<li class="toctree-l3"><a class="reference internal" href="neo4j_data_ingestion.html#indexing-network">Indexing network</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="neo4j_data_ingestion.html#ingesting-the-data-into-neo4j-logic">Ingesting the data into neo4j : Logic</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="neo4j_data_ingestion.html#improving-ingestion-rate-using-transaction">Improving ingestion rate using transaction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="neo4j_data_ingestion.html#indexing">Indexing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="neo4j_data_ingestion.html#running-the-ingestion-script">Running the ingestion script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="neo4j_data_ingestion.html#neo4j-ingestion-rates">Neo4j Ingestion Rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="neo4j_data_ingestion.html#code-documentation-for-neo4j-data-ingestion">Code Documentation for Neo4j data ingestion</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mongoDB_data_ingestion.html">Ingesting data into MongoDB</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mongoDB_data_ingestion.html#why-store-in-mongodb">Why store in MongoDB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mongoDB_data_ingestion.html#data-format-in-mongodb">Data Format in mongoDB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mongoDB_data_ingestion.html#mongodb-v-s-neo4j">mongoDB v/s neo4j</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mongoDB_data_ingestion.html#ingesting-the-data-into-mongodb-logic">Ingesting the data into mongoDB : Logic</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mongoDB_data_ingestion.html#improving-ingestion-rate-using-transactions">Improving ingestion rate using transactions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mongoDB_data_ingestion.html#improving-ingestion-rate-using-parallel-multiple-process">Improving ingestion rate using parallel multiple process</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mongoDB_data_ingestion.html#ingesting-the-data-into-mongodb-practical-side">Ingesting the data into mongoDB : Practical side</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mongoDB_data_ingestion.html#mongodb-ingestion-rates">MongoDB Ingestion Rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mongoDB_data_ingestion.html#module-ingest_raw">Code Documentation for mongoDB ingestion</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="neo4j_query_generation.html">Neo4j: API to generate cypher queries</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="neo4j_query_generation.html#template-of-a-general-query">Template of a general query</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="neo4j_query_generation.html#basic-abstraction">Basic Abstraction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="neo4j_query_generation.html#naming-entities">Naming entities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="neo4j_query_generation.html#variable-attributes">Variable attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="neo4j_query_generation.html#returns">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="neo4j_query_generation.html#creating-a-custom-query-through-dashboard-api-behind-the-scenes">Creating a custom query through dashboard API : Behind the scenes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="neo4j_query_generation.html#code-documentation-for-neo4j-query-generation">Code Documentation for Neo4j query generation</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Generating queries in mongoDB</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#generic-api-for-mongodb-idea">Generic API for mongoDB : Idea</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mongodb-query-execution-code-documentation">MongoDB query execution code documentation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="postprocessing.html">About Post processing functions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="postprocessing.html#need-of-post-processing-function">Need of post processing function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="postprocessing.html#format-of-post-processing-functions">Format of post processing functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="postprocessing.html#executing-post-processing-function">Executing post processing function</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dag.html">Composing multiple queries : DAG</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dag.html#basic-terminology">Basic terminology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dag.html#idea-behind-a-dag">Idea behind a DAG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dag.html#building-a-dag-from-queries">Building a DAG from queries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dag.html#dag-in-airflow">DAG in airflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dag.html#creating-custom-metric">Creating custom metric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dag.html#code-documentation-for-dag-abstraction">Code Documentation for DAG abstraction</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="flink.html">Generating alerts using Apache Flink and Kafka</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="flink.html#alert-specification-abstraction">Alert Specification Abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flink.html#back-end-process">Back-end process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flink.html#example-finding-viral-hashtags">Example - Finding viral hashtags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flink.html#flink-code-generator-documentation">Flink Code Generator Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flink.html#flink-api-documentation">Flink API Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking the query answering</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="benchmarking.html#neo4j-queries">Neo4j queries</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="benchmarking.html#simple-queries">Simple Queries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="benchmarking.html#complex-queries">Complex Queries</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarking.html#mongodb-queries">MongoDB queries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarking.html#code-documentation-for-benchmarking">Code Documentation for benchmarking</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dashboard_website.html">Dashboard Website</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dashboard_website.html#major-parts-of-the-dashboard-website">Major parts of the dashboard website</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#hashtags">Hashtags</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#mentions">Mentions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#urls">URLs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#alerts">Alerts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#dag">DAG</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dashboard_website.html#use-cases">Use Cases</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#viewing-top-10-popular-hashtags">Viewing top 10 popular hashtags</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#viewing-usage-history-of-hashtag">Viewing usage history of  hashtag</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#viewing-sentiment-history-of-hashtag">Viewing sentiment history of  hashtag</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#creating-a-mongodb-query">Creating a mongoDB query</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#creating-neo4j-queries">Creating neo4j queries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#create-post-processing-function">Create Post processing function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#view-queries">View Queries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#create-dag">Create DAG</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#view-dags">View DAGs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#create-custom-metric">Create Custom metric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#create-alert">Create Alert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#view-alerts">View Alerts</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="running.html">Getting the system running</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="running.html#setting-up-the-environment">Setting up the environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="running.html#running-the-dashboard">Running the dashboard</a></li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Twitter Analytics</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+    <li>Generating queries in mongoDB</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/mongoDB_query_generation.rst.txt" rel="nofollow">
+                <span class="fa fa-binoculars"></span>&#32;View page source
+            </a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody" class="toBeIndexed">
+            
+  <div class="section" id="generating-queries-in-mongodb">
+<h1>Generating queries in mongoDB<a class="headerlink" href="#generating-queries-in-mongodb" title="Permalink to this headline">¶</a></h1>
+<p>As mentioned in mongoDB ingestion section, in mongoDB we store only the data without any structural information which can be extracted quickly from incoming tweets without much processing. Further, we store in mongoDB to ensure that some very common queries can be answered quickly.</p>
+<p>This leads to these important properties of the mongoDB part of datastore:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Only very specific queries can be answered using only the mongoDB. The specific queries further depend on the data which is being stored, which is further decided by which queries are seen frequently and need to be sped up. Given that currently we have the hashtag, url and user mention collection in mongoDB with the entity name, timestamp, the sentiment associated with the tweet in which the mentioned entity occurred; we can answer only specific queries like the most popular hashtag(and its sentiment) occurring in an interval(which can be the entire time as well).</li>
+<li>This further means that the mongoDB schema and datastore can easily be modified and extended. For example, if I decide to store the named entities in the tweets as well, all we need is to make a new collection.</li>
+</ul>
+</div></blockquote>
+<p>Contrast this with neo4j where the schema is more or less for fixed for all practical purposes and the user can’t easily change it.</p>
+<p>Given the above two properties, it makes little sense to develop a complete generic API to input queries from the user as it would certainly be an overkill. So currently we provide APIs only to take only specific queries from the user. The queries which can currently be answered using mongoDB are follows(the things mentioned inside &lt;&gt; are the inputs to the query):</p>
+<blockquote>
+<div><ul class="simple">
+<li>Give the &lt;number&gt; most popular hashtags in total</li>
+<li>Give the &lt;number&gt; most popular hashtags in the time interval &lt;Begin Time&gt; and &lt;End Time&gt;</li>
+<li>Give the timetamps at which &lt;hashtag&gt; is used between &lt;Begin Time&gt; and &lt;End Time&gt;</li>
+<li>Give the timetamps, associated positive and negative sentiment of a &lt;hashtag&gt; between &lt;Begin Time&gt; and &lt;End Time&gt;</li>
+</ul>
+</div></blockquote>
+<p>Similarly, queries analogous to the above can also be answered for urls and user mentions.</p>
+<div class="section" id="generic-api-for-mongodb-idea">
+<h2>Generic API for mongoDB : Idea<a class="headerlink" href="#generic-api-for-mongodb-idea" title="Permalink to this headline">¶</a></h2>
+<p>For sake of completeness we also provide the way to generate a generic API to get mongoDB queries. For example take at this code to answer the query to get the most popular hashtags in an interval:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">pipeline</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;$match&quot;</span><span class="p">:{</span><span class="s2">&quot;timestamp&quot;</span><span class="p">:{</span><span class="s2">&quot;$gte&quot;</span><span class="p">:</span><span class="n">t1</span><span class="p">,</span><span class="s2">&quot;$lte&quot;</span><span class="p">:</span><span class="n">t2</span><span class="p">}}},{</span><span class="s2">&quot;$group&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;$hashtag&quot;</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;$sum&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}}},</span>
+<span class="p">{</span><span class="s2">&quot;$sort&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;count&quot;</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">}},{</span><span class="s2">&quot;$limit&quot;</span><span class="p">:</span><span class="n">limit</span><span class="p">}]</span>
+<span class="n">l</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">ht_collection</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">pipeline</span><span class="p">)[</span><span class="s2">&quot;result&quot;</span><span class="p">]</span>
+<span class="k">return</span> <span class="p">{</span><span class="s2">&quot;hashtag&quot;</span><span class="p">:[</span><span class="n">x</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">l</span><span class="p">],</span><span class="s2">&quot;count&quot;</span><span class="p">:[</span><span class="n">x</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">l</span><span class="p">]}</span>
+</pre></div>
+</div>
+<p>As can be seen the query answering has three parts :</p>
+<blockquote>
+<div><ul class="simple">
+<li>The aggregation pipeline: This is the part with needs to be input from the user. As we have limited number of constructs that, can be used in aggregation, Taking those as inputs along with their parameters is not that difficult. Some of the construct, though can also be filled in automatically.</li>
+<li>Aggregating the collection based on the pipeline: This has fixed code and can be generated easily.</li>
+<li>Unzipping the result based on the output variables name input by the user: Again, fixed code and thus easily generated.</li>
+</ul>
+</div></blockquote>
+<p>Along with the reasons mentioned above regarding the non requirement of generic monogDB query creator, another reason is that to generate the queries, would invariably require generation of python code, something like the above snippet and then modifying a file with a new function to connect to the database and execute the python code. This would further require modifying the source code in the dashboard website and the DAG execution python functions as well to register the new function, opening several fronts from which bugs can creep in.</p>
+<div class="section" id="mongodb-query-execution-code-documentation">
+<h3>MongoDB query execution code documentation<a class="headerlink" href="#mongodb-query-execution-code-documentation" title="Permalink to this headline">¶</a></h3>
+<p>Here we provide a documentation of the code used for this functionality.</p>
+<span class="target" id="module-execute_queries"></span><p>Module to execute mongoDB queries. The idea is to keep the  mongo interface minimal and easily extensible, and thus
+only pre specified queries can be answered through mongoDB, rather than generic ones.</p>
+<p>The <a class="reference internal" href="#module-execute_queries" title="execute_queries"><code class="xref py py-mod docutils literal"><span class="pre">execute_queries</span></code></a> module contains the classes:</p>
+<ul class="simple">
+<li><a class="reference internal" href="#execute_queries.MongoQuery" title="execute_queries.MongoQuery"><code class="xref py py-class docutils literal"><span class="pre">execute_queries.MongoQuery</span></code></a></li>
+</ul>
+<p>One can use the different function in the class to execute different queries</p>
+<p>Example illustrating how to answer different queries.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="n">MongoQuery</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">mp_ht_in_total</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span> <span class="c1"># get 10 most popular hashtags</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">mp_um_in_total</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span> <span class="c1"># get 10 most popular users</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">mp_ht_in_interval</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1500486521</span><span class="p">,</span><span class="mi">1501496521</span><span class="p">))</span> <span class="c1"># get 10 most popular hashtags in interval</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">ht_in_interval</span><span class="p">(</span><span class="s2">&quot;baystars&quot;</span><span class="p">,</span><span class="mi">1500486521</span><span class="p">,</span><span class="mi">1501496521</span><span class="p">))</span> <span class="c1"># get the timestamps at which baystars is used in interval</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">ht_with_sentiment</span><span class="p">(</span><span class="s2">&quot;baystars&quot;</span><span class="p">,</span><span class="mi">1500486521</span><span class="p">,</span><span class="mi">1501496521</span><span class="p">))</span> <span class="c1"># get the timestamps and sentiment at which baystars is used in interval</span>
+</pre></div>
+</div>
+<dl class="class">
+<dt id="execute_queries.MongoQuery">
+<em class="property">class </em><code class="descclassname">execute_queries.</code><code class="descname">MongoQuery</code><a class="reference internal" href="_modules/execute_queries.html#MongoQuery"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#execute_queries.MongoQuery" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Class to answer mongoDB queries. Make connection to the database and keep on answering queris untill the
+object is deleted</p>
+<dl class="method">
+<dt id="execute_queries.MongoQuery.clear_db">
+<code class="descname">clear_db</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/execute_queries.html#MongoQuery.clear_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#execute_queries.MongoQuery.clear_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete all the collections</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="execute_queries.MongoQuery.ht_in_interval">
+<code class="descname">ht_in_interval</code><span class="sig-paren">(</span><em>hashtag</em>, <em>begin</em>, <em>end</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/execute_queries.html#MongoQuery.ht_in_interval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#execute_queries.MongoQuery.ht_in_interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Give the timetamps at which &lt;hashtag&gt; is used between &lt;begin&gt; and &lt;end&gt;</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>hashtag</strong> – hashtag for the query</li>
+<li><strong>begin</strong> – the begining unix time timestamp of the interval</li>
+<li><strong>end</strong> – the ending unix time timestamp of the interval</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="execute_queries.MongoQuery.ht_with_sentiment">
+<code class="descname">ht_with_sentiment</code><span class="sig-paren">(</span><em>hashtag</em>, <em>begin</em>, <em>end</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/execute_queries.html#MongoQuery.ht_with_sentiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#execute_queries.MongoQuery.ht_with_sentiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Give the timetamps at which &lt;hashtag&gt; is used and and sentiment of tweet in which &lt;hashtag&gt; occured between &lt;begin&gt; and &lt;end&gt;</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>hashtag</strong> – hashtag for the query</li>
+<li><strong>begin</strong> – the begining unix time timestamp of the interval</li>
+<li><strong>end</strong> – the ending unix time timestamp of the interval</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="execute_queries.MongoQuery.mp_ht_in_interval">
+<code class="descname">mp_ht_in_interval</code><span class="sig-paren">(</span><em>limit</em>, <em>begin</em>, <em>end</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/execute_queries.html#MongoQuery.mp_ht_in_interval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#execute_queries.MongoQuery.mp_ht_in_interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to give the most popular hashtags in the time interval &lt;begin&gt; and &lt;end&gt;</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>limit</strong> – number of records to return</li>
+<li><strong>begin</strong> – the begining unix time timestamp of the interval</li>
+<li><strong>end</strong> – the ending unix time timestamp of the interval</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="execute_queries.MongoQuery.mp_ht_in_total">
+<code class="descname">mp_ht_in_total</code><span class="sig-paren">(</span><em>limit</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/execute_queries.html#MongoQuery.mp_ht_in_total"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#execute_queries.MongoQuery.mp_ht_in_total" title="Permalink to this definition">¶</a></dt>
+<dd><p>Give &lt;limit&gt; most popular hashtags in total</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>limit</strong> – number of records to return</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="execute_queries.MongoQuery.mp_um_in_total">
+<code class="descname">mp_um_in_total</code><span class="sig-paren">(</span><em>limit</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/execute_queries.html#MongoQuery.mp_um_in_total"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#execute_queries.MongoQuery.mp_um_in_total" title="Permalink to this definition">¶</a></dt>
+<dd><p>Give &lt;limit&gt; most popular users(in iterms of mentions) in total</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>limit</strong> – number of records to return</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div><!-- /.toBeIndexed -->
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="postprocessing.html" class="btn btn-neutral float-right" title="Accesskey Alt(+Shift)+n" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="neo4j_query_generation.html" class="btn btn-neutral" title="Accesskey Alt(+Shift)+p" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo" class="contentinfo">
+      <p class="show_source">
+        <a href="_sources/mongoDB_query_generation.rst.txt" rel="nofollow">
+          <span class="fa fa-binoculars"></span>&#32;View page source
+        </a>
+      </p>
+      <p class="show_copyright">
+            &copy; Copyright 2018, Deepak Saini, Abhishek Gupta
+      </p>
+      <p class="show_sphinx">
+        Built with <a href="http://sphinx-doc.org/" target="_blank">Sphinx</a> and
+        <a href="https://github.com/TYPO3-Documentation/t3SphinxThemeRtd" target="_blank">t3SphinxThemeRtd.</a>
+        Report theme issues <a href="https://github.com/TYPO3-Documentation/t3SphinxThemeRtd/issues" target="_blank">here.</a>
+      </p>
+      <p class="show_legalinfo">
+        <a href="https://typo3.org/legal-info/" rel="nofollow">
+          <span class="fa fa-legal"></span>&#32;Legal Info
+        </a>
+      </p>
+
+
+
+
+  </div>
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="_static/jquery-ui/jquery-ui.min.js"></script>
+      <script type="text/javascript" src="_static/js/theme.js"></script>
+      <script type="text/javascript" src="_static/js/t3autocomplete.js"></script>
+
+  
+
+  
+   
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   <script type="text/javascript" id="idPiwikScriptPlaceholder"></script></body>
+</html>

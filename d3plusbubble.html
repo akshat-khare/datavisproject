@@ -1,0 +1,41 @@
+<!doctype html>
+<meta charset="utf-8">
+
+<!-- load D3js -->
+<script src="https://d3plus.org/js/d3.js"></script>
+
+<!-- load D3plus after D3js -->
+<script src="https://d3plus.org/js/d3plus.js"></script>
+
+<!-- create container element for visualization -->
+<div id="viz" ></div>
+
+<script>
+
+  // sample data array
+  // var sample_data = [
+  //   {"value": 100, "name": "alpha", "group": "group 1"},
+  //   {"value": 70, "name": "beta", "group": "group 2"},
+  //   {"value": 40, "name": "gamma", "group": "group 2"},
+  //   {"value": 15, "name": "delta", "group": "group 2"},
+  //   {"value": 5, "name": "epsilon", "group": "group 1"},
+  //   {"value": 1, "name": "zeta", "group": "group 1"}
+//   ];
+  var tryjson= [{"hashtag": "LOVE_YOURSELF", "count": 7377, "group": "group 1"}, {"hashtag": "BTS", "count": 4855, "group": "group 1"}, {"hashtag": "\ubc29\ud0c4\uc18c\ub144\ub2e8", "count": 4689, "group": "group 2"}, {"hashtag": "PremiosMTVMiaw", "count": 3096, "group": "group 1"}, {"hashtag": "MetGala", "count": 1893, "group": "group 1"}, {"hashtag": "MTVBRKPOPBTS", "count": 1411, "group": "group 1"}, {"hashtag": "MTVLAKPOPBTS", "count": 1390, "group": "group 1"}, {"hashtag": "SMTMThailand", "count": 1086, "group": "group 1"}, {"hashtag": "GOT7", "count": 976, "group": "group 1"}, {"hashtag": "ShawnMendesTheTour", "count": 652, "group": "group 1"}, {"hashtag": "MTVLAKPOPGOT7", "count": 566, "group": "group 1"}, {"hashtag": "\u30ed\u30fc\u30bd\u30f3", "count": 493, "group": "group 2"}, {"hashtag": "\u3054\u3061\u308d\u3046", "count": 489, "group": "group 2"}, {"hashtag": "\u30de\u30c1\u30ab\u30d5\u30a7", "count": 489, "group": "group 2"}, {"hashtag": "\u30a2\u30a4\u30b9\u30ab\u30d5\u30a7\u30e9\u30c6\u7121\u6599\u30d7\u30ec\u30bc\u30f3\u30c8", "count": 479, "group": "group 2"}, {"hashtag": "\u0e04\u0e21\u0e41\u0e1d\u0e01", "count": 372, "group": "group 2"}, {"hashtag": "\uac13\uc138\ube10", "count": 359, "group": "group 2"}, {"hashtag": "MTVLAFANARMYBTS", "count": 357, "group": "group 1"}, {"hashtag": "\u0e01\u0e32\u0e2b\u0e25\u0e21\u0e2b\u0e23\u0e17\u0e36\u0e01", "count": 357, "group": "group 2"}, {"hashtag": "Singularity", "count": 333, "group": "group 1"}];
+for(var i=0;i<tryjson.length;i++){
+  tryjson[i]["count"] = Math.pow(tryjson[i]["count"], 0.5);
+}
+
+  // instantiate d3plus
+  var visualization = d3plus.viz()
+    .container("#viz")     // container DIV to hold the visualization
+    .data(tryjson)     // data to use with the visualization
+    .type("bubbles")       // visualization type
+    .id(["group", "hashtag"]) // nesting keys
+    .depth(1)              // 0-based depth
+    .size("count")         // key name to size bubbles
+    .labels({"font": {"sizeMin": 5}})
+    .color("group")        // color by each group
+    .draw()                // finally, draw the visualization!
+
+</script>

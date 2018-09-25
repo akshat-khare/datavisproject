@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Neo4j: API to generate cypher queries &mdash; Twitter Analytics 0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/jquery-ui/jquery-ui.min.css" type="text/css" />
+  
+    <link rel="stylesheet" href="_static/css/t3more.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Twitter Analytics 0.1 documentation" href="#"/>
+        <link rel="next" title="Generating queries in mongoDB" href="mongoDB_query_generation.html"/>
+        <link rel="prev" title="Ingesting data into MongoDB" href="mongoDB_data_ingestion.html"/> 
+  <script src="_static/js/modernizr.min.js"></script>
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        <ul class="sidebartop">
+
+          <li class="docsite">
+            <a href="https://docs.typo3.org"><img src="_static/img/typo3-documentation.png" class="logo" /></a>
+          </li>
+
+          <li class="project">
+            <a href="index.html">
+              Twitter Analytics<br>0.1</a>
+          </li><li class="nolink search">
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search this project" id="searchinput" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div></li>
+
+        </ul>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction to twitter analytics system</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#major-parts-of-the-system">Major parts of the system</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="twitter_stream.html">Read data from Twitter API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="twitter_stream.html#user-timeline-api">User Timeline API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="twitter_stream.html#stream-sample-api">Stream Sample API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="twitter_stream.html#user-timeline-api-code-documentation">User Timeline API Code Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="twitter_stream.html#stream-sample-api-code-documentation">Stream Sample API Code Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="neo4j_data_ingestion.html">Ingesting data into Neo4j</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="neo4j_data_ingestion.html#data-stored-in-neo4j">Data stored in neo4j</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="neo4j_data_ingestion.html#user-network">User network</a></li>
+<li class="toctree-l3"><a class="reference internal" href="neo4j_data_ingestion.html#tweet-network">Tweet network</a></li>
+<li class="toctree-l3"><a class="reference internal" href="neo4j_data_ingestion.html#indexing-network">Indexing network</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="neo4j_data_ingestion.html#ingesting-the-data-into-neo4j-logic">Ingesting the data into neo4j : Logic</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="neo4j_data_ingestion.html#improving-ingestion-rate-using-transaction">Improving ingestion rate using transaction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="neo4j_data_ingestion.html#indexing">Indexing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="neo4j_data_ingestion.html#running-the-ingestion-script">Running the ingestion script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="neo4j_data_ingestion.html#neo4j-ingestion-rates">Neo4j Ingestion Rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="neo4j_data_ingestion.html#code-documentation-for-neo4j-data-ingestion">Code Documentation for Neo4j data ingestion</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mongoDB_data_ingestion.html">Ingesting data into MongoDB</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mongoDB_data_ingestion.html#why-store-in-mongodb">Why store in MongoDB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mongoDB_data_ingestion.html#data-format-in-mongodb">Data Format in mongoDB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mongoDB_data_ingestion.html#mongodb-v-s-neo4j">mongoDB v/s neo4j</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mongoDB_data_ingestion.html#ingesting-the-data-into-mongodb-logic">Ingesting the data into mongoDB : Logic</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mongoDB_data_ingestion.html#improving-ingestion-rate-using-transactions">Improving ingestion rate using transactions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mongoDB_data_ingestion.html#improving-ingestion-rate-using-parallel-multiple-process">Improving ingestion rate using parallel multiple process</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mongoDB_data_ingestion.html#ingesting-the-data-into-mongodb-practical-side">Ingesting the data into mongoDB : Practical side</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mongoDB_data_ingestion.html#mongodb-ingestion-rates">MongoDB Ingestion Rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mongoDB_data_ingestion.html#module-ingest_raw">Code Documentation for mongoDB ingestion</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Neo4j: API to generate cypher queries</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#template-of-a-general-query">Template of a general query</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#basic-abstraction">Basic Abstraction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#naming-entities">Naming entities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#variable-attributes">Variable attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#returns">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-a-custom-query-through-dashboard-api-behind-the-scenes">Creating a custom query through dashboard API : Behind the scenes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#code-documentation-for-neo4j-query-generation">Code Documentation for Neo4j query generation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mongoDB_query_generation.html">Generating queries in mongoDB</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mongoDB_query_generation.html#generic-api-for-mongodb-idea">Generic API for mongoDB : Idea</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mongoDB_query_generation.html#mongodb-query-execution-code-documentation">MongoDB query execution code documentation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="postprocessing.html">About Post processing functions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="postprocessing.html#need-of-post-processing-function">Need of post processing function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="postprocessing.html#format-of-post-processing-functions">Format of post processing functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="postprocessing.html#executing-post-processing-function">Executing post processing function</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dag.html">Composing multiple queries : DAG</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dag.html#basic-terminology">Basic terminology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dag.html#idea-behind-a-dag">Idea behind a DAG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dag.html#building-a-dag-from-queries">Building a DAG from queries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dag.html#dag-in-airflow">DAG in airflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dag.html#creating-custom-metric">Creating custom metric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dag.html#code-documentation-for-dag-abstraction">Code Documentation for DAG abstraction</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="flink.html">Generating alerts using Apache Flink and Kafka</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="flink.html#alert-specification-abstraction">Alert Specification Abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flink.html#back-end-process">Back-end process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flink.html#example-finding-viral-hashtags">Example - Finding viral hashtags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flink.html#flink-code-generator-documentation">Flink Code Generator Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flink.html#flink-api-documentation">Flink API Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking the query answering</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="benchmarking.html#neo4j-queries">Neo4j queries</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="benchmarking.html#simple-queries">Simple Queries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="benchmarking.html#complex-queries">Complex Queries</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarking.html#mongodb-queries">MongoDB queries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarking.html#code-documentation-for-benchmarking">Code Documentation for benchmarking</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dashboard_website.html">Dashboard Website</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dashboard_website.html#major-parts-of-the-dashboard-website">Major parts of the dashboard website</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#hashtags">Hashtags</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#mentions">Mentions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#urls">URLs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#alerts">Alerts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#dag">DAG</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dashboard_website.html#use-cases">Use Cases</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#viewing-top-10-popular-hashtags">Viewing top 10 popular hashtags</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#viewing-usage-history-of-hashtag">Viewing usage history of  hashtag</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#viewing-sentiment-history-of-hashtag">Viewing sentiment history of  hashtag</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#creating-a-mongodb-query">Creating a mongoDB query</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#creating-neo4j-queries">Creating neo4j queries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#create-post-processing-function">Create Post processing function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#view-queries">View Queries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#create-dag">Create DAG</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#view-dags">View DAGs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#create-custom-metric">Create Custom metric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#create-alert">Create Alert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dashboard_website.html#view-alerts">View Alerts</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="running.html">Getting the system running</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="running.html#setting-up-the-environment">Setting up the environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="running.html#running-the-dashboard">Running the dashboard</a></li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Twitter Analytics</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+    <li>Neo4j: API to generate cypher queries</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/neo4j_query_generation.rst.txt" rel="nofollow">
+                <span class="fa fa-binoculars"></span>&#32;View page source
+            </a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody" class="toBeIndexed">
+            
+  <div class="section" id="neo4j-api-to-generate-cypher-queries">
+<h1>Neo4j: API to generate cypher queries<a class="headerlink" href="#neo4j-api-to-generate-cypher-queries" title="Permalink to this headline">¶</a></h1>
+<p>Here we explain the API to generate cypher queries for Neo4j.</p>
+<div class="section" id="template-of-a-general-query">
+<h2>Template of a general query<a class="headerlink" href="#template-of-a-general-query" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="basic-abstraction">
+<h3>Basic Abstraction<a class="headerlink" href="#basic-abstraction" title="Permalink to this headline">¶</a></h3>
+<p>Any query can be thought of as a 2 step process -</p>
+<blockquote>
+<div><ul class="simple">
+<li>Extract the relevant sub-graph satisfying the query constraints (Eg. Users and their tweets that use a certain hashtag)</li>
+<li>Post-processing of this sub-graph to return desired result (Eg. Return “names” of such users, Return “number” of such users)</li>
+</ul>
+</div></blockquote>
+<p>In a generic way, the 1st step can be constructed using AND,OR,NOT of multiple constraints(Though in our code right now, only AND is supported as Neo4j doesn’t support OR and NOT directly).We now specify how each such constraint can be built.</p>
+<p>We look at the network in an abstract in two dimensions.</p>
+<blockquote>
+<div><ul class="simple">
+<li>There are “Entities” (users and tweets) which have “Attributes” (like user has screen_name,follower_count etc. and tweet has hashtag,mentions etc.).</li>
+<li>The entities have “Relations” between them which have the only attribute as time/time-interval (Eg. Follows “relation” between 2 user “entities” has a time-interval associated).</li>
+</ul>
+</div></blockquote>
+<p>So each constraint can be specified by specifying a pattern consisting of</p>
+<blockquote>
+<div><ul class="simple">
+<li>Two Entities and their Attributes</li>
+<li>Relation between the entities and its Attribute (which is the time constraint of this relation)</li>
+</ul>
+</div></blockquote>
+<p>To make things clear we provide an example here.
+Suppose our query is - Find users who follow a user with id=1 and have also tweeted with a hashtag “h” between time t1 and t2.
+We first break this into AND of two constraints:</p>
+<blockquote>
+<div><ul class="simple">
+<li>User follows a user with id=1</li>
+<li>User has tweeted with a hashtag “h” between time t1 and t2.</li>
+</ul>
+</div></blockquote>
+<p>We now specify the 1st constraint using our entity-attribute abstraction.</p>
+<blockquote>
+<div><ul class="simple">
+<li>Source entity - User, Attributes - None</li>
+<li>Destination entity - User, Attributes - id=1</li>
+<li>Relationship - Follows, Attributes - None</li>
+</ul>
+</div></blockquote>
+<p>We now specify the 2nd constraint using our entity-attribute abstraction.</p>
+<blockquote>
+<div><ul class="simple">
+<li>Source entity - User, Attributes - None</li>
+<li>Destination entity - Tweet, Attributes - hashtag:”h”</li>
+<li>Relationship - Follows, Attributes - b/w t1,t2</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="naming-entities">
+<h3>Naming entities<a class="headerlink" href="#naming-entities" title="Permalink to this headline">¶</a></h3>
+<p>The missing thing in this abstraction is that we need to be able to distinguish that the Users in the two constraints above refer to different users. To do so, we “name” each entity (like a variable). So we have:</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="first docutils">
+<dt>Constraint 1:</dt>
+<dd><ul class="first last">
+<li>Source entity - u1:User, Attributes - None</li>
+<li>Destination entity - u2:User, Attributes - id=1</li>
+<li>Relationship - Follows, Attributes - None</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Constraint 2:</dt>
+<dd><ul class="first last">
+<li>Source entity - u1:User, Attributes - None</li>
+<li>Destination entity - u3:Tweet, Attributes - hashtag:”h”</li>
+<li>Relationship - Follows, Attributes - b/w t1,t2</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="variable-attributes">
+<h3>Variable attributes<a class="headerlink" href="#variable-attributes" title="Permalink to this headline">¶</a></h3>
+<p>In the example above, we considered a fixed hashtag “h”. But the user can provide a variable attribute to an entity by giving it a name enclosed in curly braces <code class="docutils literal"><span class="pre">{}</span></code>. In such a case, the attribute is treated as a variable to the query and the name inside the braces is treated as the name of the said variable. For example, had we input the hashtag as <code class="docutils literal"><span class="pre">{hash1}</span></code>, it means that our query has a variable named “hash1”.</p>
+</div>
+<div class="section" id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Permalink to this headline">¶</a></h3>
+<p>The user can write a comma separated list of entities/attributes to return. An entity can be specified directly by its name. Eg. <code class="docutils literal"><span class="pre">my_tweet_entity</span></code>. An entity’s attribute can be specified as <code class="docutils literal"><span class="pre">&lt;entitiy_name&gt;.&lt;attribute&gt;</span></code>. Eg. <code class="docutils literal"><span class="pre">u.screen_name</span></code>.</p>
+<p>The user can also group on certain entity/attribute by using an aggregate function on some other entity/attribute. Eg. <code class="docutils literal"><span class="pre">return</span> <span class="pre">u.id,</span> <span class="pre">count(distinct</span> <span class="pre">h)</span></code> will group on u.id and return count of distinct h among all records returned for each u.id.</p>
+</div>
+</div>
+<div class="section" id="creating-a-custom-query-through-dashboard-api-behind-the-scenes">
+<h2>Creating a custom query through dashboard API : Behind the scenes<a class="headerlink" href="#creating-a-custom-query-through-dashboard-api-behind-the-scenes" title="Permalink to this headline">¶</a></h2>
+<p>A user can follow the general template of a query as provided above to build a query.
+when a user provides the inputs to specify the query, the following steps are executed on the server:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Cleanup and processing of the inputs provided by the user.</li>
+<li>The variables(User/Tweet), their attributes and the relations are stored in a database. These stored objects can be later used by the user.</li>
+</ul>
+</div></blockquote>
+<p>Finally, to create the query the user need to specify the query name and the return variables. The query specified by the user in terms of constraints is converted into a Cypher neo4j graph mining query:</p>
+<blockquote>
+<div><ul class="simple">
+<li>All variable attributes are unwinded. This connects to the fact that we are expecting inputs as a list of native objects, hence the unwind for all inputs to the query. This ensures a Cartesian cross in the query.</li>
+<li>The time indexed part of the query is generated through the time indexing structure with frames and events.</li>
+<li>The network part is generated through the user network and tweet network based on the relationships.</li>
+<li>The return variables specified by the user are just concatenated with a return statement in the cypher.</li>
+</ul>
+</div></blockquote>
+<p>It is to be noted here, that we don’t do any kind of checking if the constraints specified by the user to build the query are valid. Checking this in a generic manner without executing the query is difficult. So, this is delegated to the neo4j query engine itself and the user will get empty result in case the constrains are invalid.</p>
+</div>
+<div class="section" id="code-documentation-for-neo4j-query-generation">
+<h2>Code Documentation for Neo4j query generation<a class="headerlink" href="#code-documentation-for-neo4j-query-generation" title="Permalink to this headline">¶</a></h2>
+<p>Here we provide a documentation of the code.</p>
+<span class="target" id="module-generate_queries"></span><p>Module to generate cypher code for inputs taken from user though dashboard API.</p>
+<p>The <a class="reference internal" href="#module-generate_queries" title="generate_queries"><code class="xref py py-mod docutils literal"><span class="pre">generate_queries</span></code></a> module contains the classes:</p>
+<ul class="simple">
+<li><a class="reference internal" href="#generate_queries.CreateQuery" title="generate_queries.CreateQuery"><code class="xref py py-class docutils literal"><span class="pre">generate_queries.CreateQuery</span></code></a></li>
+</ul>
+<p>One can use the <a class="reference internal" href="#generate_queries.CreateQuery.create_query" title="generate_queries.CreateQuery.create_query"><code class="xref py py-func docutils literal"><span class="pre">generate_queries.CreateQuery.create_query()</span></code></a> to build a cypher query.</p>
+<p>Example illustrating how to create a query which gives the userids and their tweet counts who have used a certian hashtag.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">actors</span><span class="o">=</span><span class="p">[(</span><span class="s2">&quot;u&quot;</span><span class="p">,</span><span class="s2">&quot;USER&quot;</span><span class="p">),(</span><span class="s2">&quot;t&quot;</span><span class="p">,</span><span class="s2">&quot;TWEET&quot;</span><span class="p">),(</span><span class="s2">&quot;t1&quot;</span><span class="p">,</span><span class="s2">&quot;TWEET&quot;</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attributes</span><span class="o">=</span><span class="p">[[],[(</span><span class="s2">&quot;hashtag&quot;</span><span class="p">,</span><span class="s2">&quot;</span><span class="si">{hash}</span><span class="s2">&quot;</span><span class="p">)],[]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">relations</span><span class="o">=</span><span class="p">[(</span><span class="s2">&quot;u&quot;</span><span class="p">,</span><span class="s2">&quot;TWEETED&quot;</span><span class="p">,</span><span class="s2">&quot;t&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">),(</span><span class="s2">&quot;u&quot;</span><span class="p">,</span><span class="s2">&quot;TWEETED&quot;</span><span class="p">,</span><span class="s2">&quot;t1&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cq</span> <span class="o">=</span> <span class="n">CreateQuery</span><span class="p">();</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">return_values</span><span class="o">=</span><span class="s2">&quot;u.id,count(t1)&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ret_dict</span> <span class="o">=</span> <span class="n">cq</span><span class="o">.</span><span class="n">create_query</span><span class="p">(</span><span class="n">actors</span><span class="p">,</span><span class="n">attributes</span><span class="p">,</span><span class="n">relations</span><span class="p">,</span><span class="n">return_values</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pprint</span><span class="p">(</span><span class="n">ret_dict</span><span class="p">,</span><span class="n">width</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Example of a query which uses time indexing in a relationship:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">actors</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;USER&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;u1&#39;</span><span class="p">,</span> <span class="s1">&#39;USER&#39;</span><span class="p">)]</span> <span class="o">+</span> <span class="p">[(</span><span class="s1">&#39;t1&#39;</span><span class="p">,</span> <span class="s1">&#39;TWEET&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;t2&#39;</span><span class="p">,</span> <span class="s1">&#39;TWEET&#39;</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attributes</span> <span class="o">=</span> <span class="p">[[(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;12&#39;</span><span class="p">)],</span> <span class="p">[(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;24&#39;</span><span class="p">)]]</span><span class="o">+</span><span class="p">[[(</span><span class="s1">&#39;hashtag&#39;</span><span class="p">,</span> <span class="s1">&#39;BLUERISING&#39;</span><span class="p">)],</span> <span class="p">[(</span><span class="s1">&#39;retweet_of&#39;</span><span class="p">,</span> <span class="s1">&#39;t1&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;has_mention&#39;</span><span class="p">,</span> <span class="s1">&#39;u1&#39;</span><span class="p">)]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">relations</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;FOLLOWS&#39;</span><span class="p">,</span> <span class="s1">&#39;u1&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;TWEETED&#39;</span><span class="p">,</span> <span class="s1">&#39;t2&#39;</span><span class="p">,</span> <span class="s1">&#39;24&#39;</span><span class="p">,</span> <span class="s1">&#39;48&#39;</span><span class="p">)]</span>
+</pre></div>
+</div>
+<dl class="class">
+<dt id="generate_queries.CreateQuery">
+<em class="property">class </em><code class="descclassname">generate_queries.</code><code class="descname">CreateQuery</code><a class="reference internal" href="_modules/generate_queries.html#CreateQuery"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#generate_queries.CreateQuery" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Class containing functions to generate query.</p>
+<dl class="method">
+<dt id="generate_queries.CreateQuery.conditional_create">
+<code class="descname">conditional_create</code><span class="sig-paren">(</span><em>entity</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/generate_queries.html#CreateQuery.conditional_create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#generate_queries.CreateQuery.conditional_create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Condionally provide the attributes of the node if not already created, else directly use the name of the variable create earlier.
+If already create, pass empty list of properties.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>entity</strong> – the entity which to check and create</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the code for the node as neo4j node enclosed in ()</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="generate_queries.CreateQuery.create_query">
+<code class="descname">create_query</code><span class="sig-paren">(</span><em>actors</em>, <em>attributes</em>, <em>relations</em>, <em>return_values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/generate_queries.html#CreateQuery.create_query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#generate_queries.CreateQuery.create_query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a list of attributes and relationships between them and return a cypher code as string.
+For the format of the lists see the examples.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>actors</strong> – the variable names, types of the attributes</li>
+<li><strong>attributes</strong> – the properties of the actors</li>
+<li><strong>relations</strong> – the relations between the entities along with time index for the relations</li>
+<li><strong>return_values</strong> – a direct string containing the return directive.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">index of the bond in the molecule</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Here we are expecting that if user has not specified the times on the dashboard, then we pass epmty string. If you
+store some other default in dashboard database then change this accordingly.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The return _values is directly used as a string in the cypher query, so the user can use AS and other similar cypher directives while specifying the query.</p>
+</div>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">Support to compose queries using OR. For example, currently compostion of relationships or attribute properties like all tweets(t) which are retweets of t1 or quoted t2, is not supported. Use cypher union for this.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="generate_queries.CreateQuery.generate_node">
+<code class="descname">generate_node</code><span class="sig-paren">(</span><em>var</em>, <em>type</em>, <em>props</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/generate_queries.html#CreateQuery.generate_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#generate_queries.CreateQuery.generate_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function for <a class="reference internal" href="#generate_queries.CreateQuery.conditional_create" title="generate_queries.CreateQuery.conditional_create"><code class="xref py py-func docutils literal"><span class="pre">generate_queries.CreateQuery.conditional_create()</span></code></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>var</strong> – the variable name of the entity</li>
+<li><strong>type</strong> – the type of the entity. Observe we pass type as :USER and NOT as USER</li>
+<li><strong>props</strong> – the properties of the entity.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the code for the node as neo4j node enclosed in ()</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div><!-- /.toBeIndexed -->
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="mongoDB_query_generation.html" class="btn btn-neutral float-right" title="Accesskey Alt(+Shift)+n" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="mongoDB_data_ingestion.html" class="btn btn-neutral" title="Accesskey Alt(+Shift)+p" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo" class="contentinfo">
+      <p class="show_source">
+        <a href="_sources/neo4j_query_generation.rst.txt" rel="nofollow">
+          <span class="fa fa-binoculars"></span>&#32;View page source
+        </a>
+      </p>
+      <p class="show_copyright">
+            &copy; Copyright 2018, Deepak Saini, Abhishek Gupta
+      </p>
+      <p class="show_sphinx">
+        Built with <a href="http://sphinx-doc.org/" target="_blank">Sphinx</a> and
+        <a href="https://github.com/TYPO3-Documentation/t3SphinxThemeRtd" target="_blank">t3SphinxThemeRtd.</a>
+        Report theme issues <a href="https://github.com/TYPO3-Documentation/t3SphinxThemeRtd/issues" target="_blank">here.</a>
+      </p>
+      <p class="show_legalinfo">
+        <a href="https://typo3.org/legal-info/" rel="nofollow">
+          <span class="fa fa-legal"></span>&#32;Legal Info
+        </a>
+      </p>
+
+
+
+
+  </div>
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="_static/jquery-ui/jquery-ui.min.js"></script>
+      <script type="text/javascript" src="_static/js/theme.js"></script>
+      <script type="text/javascript" src="_static/js/t3autocomplete.js"></script>
+
+  
+
+  
+   
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   <script type="text/javascript" id="idPiwikScriptPlaceholder"></script></body>
+</html>

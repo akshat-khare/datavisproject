@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Dashboard Website &mdash; Twitter Analytics 0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/jquery-ui/jquery-ui.min.css" type="text/css" />
+  
+    <link rel="stylesheet" href="_static/css/t3more.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Twitter Analytics 0.1 documentation" href="#"/>
+        <link rel="next" title="Getting the system running" href="running.html"/>
+        <link rel="prev" title="Benchmarking the query answering" href="benchmarking.html"/> 
+  <script src="_static/js/modernizr.min.js"></script>
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        <ul class="sidebartop">
+
+          <li class="docsite">
+            <a href="https://docs.typo3.org"><img src="_static/img/typo3-documentation.png" class="logo" /></a>
+          </li>
+
+          <li class="project">
+            <a href="index.html">
+              Twitter Analytics<br>0.1</a>
+          </li><li class="nolink search">
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search this project" id="searchinput" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div></li>
+
+        </ul>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction to twitter analytics system</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#major-parts-of-the-system">Major parts of the system</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="twitter_stream.html">Read data from Twitter API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="twitter_stream.html#user-timeline-api">User Timeline API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="twitter_stream.html#stream-sample-api">Stream Sample API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="twitter_stream.html#user-timeline-api-code-documentation">User Timeline API Code Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="twitter_stream.html#stream-sample-api-code-documentation">Stream Sample API Code Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="neo4j_data_ingestion.html">Ingesting data into Neo4j</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="neo4j_data_ingestion.html#data-stored-in-neo4j">Data stored in neo4j</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="neo4j_data_ingestion.html#user-network">User network</a></li>
+<li class="toctree-l3"><a class="reference internal" href="neo4j_data_ingestion.html#tweet-network">Tweet network</a></li>
+<li class="toctree-l3"><a class="reference internal" href="neo4j_data_ingestion.html#indexing-network">Indexing network</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="neo4j_data_ingestion.html#ingesting-the-data-into-neo4j-logic">Ingesting the data into neo4j : Logic</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="neo4j_data_ingestion.html#improving-ingestion-rate-using-transaction">Improving ingestion rate using transaction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="neo4j_data_ingestion.html#indexing">Indexing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="neo4j_data_ingestion.html#running-the-ingestion-script">Running the ingestion script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="neo4j_data_ingestion.html#neo4j-ingestion-rates">Neo4j Ingestion Rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="neo4j_data_ingestion.html#code-documentation-for-neo4j-data-ingestion">Code Documentation for Neo4j data ingestion</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mongoDB_data_ingestion.html">Ingesting data into MongoDB</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mongoDB_data_ingestion.html#why-store-in-mongodb">Why store in MongoDB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mongoDB_data_ingestion.html#data-format-in-mongodb">Data Format in mongoDB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mongoDB_data_ingestion.html#mongodb-v-s-neo4j">mongoDB v/s neo4j</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mongoDB_data_ingestion.html#ingesting-the-data-into-mongodb-logic">Ingesting the data into mongoDB : Logic</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mongoDB_data_ingestion.html#improving-ingestion-rate-using-transactions">Improving ingestion rate using transactions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mongoDB_data_ingestion.html#improving-ingestion-rate-using-parallel-multiple-process">Improving ingestion rate using parallel multiple process</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mongoDB_data_ingestion.html#ingesting-the-data-into-mongodb-practical-side">Ingesting the data into mongoDB : Practical side</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mongoDB_data_ingestion.html#mongodb-ingestion-rates">MongoDB Ingestion Rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mongoDB_data_ingestion.html#module-ingest_raw">Code Documentation for mongoDB ingestion</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="neo4j_query_generation.html">Neo4j: API to generate cypher queries</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="neo4j_query_generation.html#template-of-a-general-query">Template of a general query</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="neo4j_query_generation.html#basic-abstraction">Basic Abstraction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="neo4j_query_generation.html#naming-entities">Naming entities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="neo4j_query_generation.html#variable-attributes">Variable attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="neo4j_query_generation.html#returns">Returns</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="neo4j_query_generation.html#creating-a-custom-query-through-dashboard-api-behind-the-scenes">Creating a custom query through dashboard API : Behind the scenes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="neo4j_query_generation.html#code-documentation-for-neo4j-query-generation">Code Documentation for Neo4j query generation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mongoDB_query_generation.html">Generating queries in mongoDB</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mongoDB_query_generation.html#generic-api-for-mongodb-idea">Generic API for mongoDB : Idea</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mongoDB_query_generation.html#mongodb-query-execution-code-documentation">MongoDB query execution code documentation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="postprocessing.html">About Post processing functions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="postprocessing.html#need-of-post-processing-function">Need of post processing function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="postprocessing.html#format-of-post-processing-functions">Format of post processing functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="postprocessing.html#executing-post-processing-function">Executing post processing function</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dag.html">Composing multiple queries : DAG</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dag.html#basic-terminology">Basic terminology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dag.html#idea-behind-a-dag">Idea behind a DAG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dag.html#building-a-dag-from-queries">Building a DAG from queries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dag.html#dag-in-airflow">DAG in airflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dag.html#creating-custom-metric">Creating custom metric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dag.html#code-documentation-for-dag-abstraction">Code Documentation for DAG abstraction</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="flink.html">Generating alerts using Apache Flink and Kafka</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="flink.html#alert-specification-abstraction">Alert Specification Abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flink.html#back-end-process">Back-end process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flink.html#example-finding-viral-hashtags">Example - Finding viral hashtags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flink.html#flink-code-generator-documentation">Flink Code Generator Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flink.html#flink-api-documentation">Flink API Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking the query answering</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="benchmarking.html#neo4j-queries">Neo4j queries</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="benchmarking.html#simple-queries">Simple Queries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="benchmarking.html#complex-queries">Complex Queries</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarking.html#mongodb-queries">MongoDB queries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarking.html#code-documentation-for-benchmarking">Code Documentation for benchmarking</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Dashboard Website</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#major-parts-of-the-dashboard-website">Major parts of the dashboard website</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#hashtags">Hashtags</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mentions">Mentions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#urls">URLs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#alerts">Alerts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dag">DAG</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#use-cases">Use Cases</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#viewing-top-10-popular-hashtags">Viewing top 10 popular hashtags</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#viewing-usage-history-of-hashtag">Viewing usage history of  hashtag</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#viewing-sentiment-history-of-hashtag">Viewing sentiment history of  hashtag</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#creating-a-mongodb-query">Creating a mongoDB query</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#creating-neo4j-queries">Creating neo4j queries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#create-post-processing-function">Create Post processing function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#view-queries">View Queries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#create-dag">Create DAG</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#view-dags">View DAGs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#create-custom-metric">Create Custom metric</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#create-alert">Create Alert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#view-alerts">View Alerts</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="running.html">Getting the system running</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="running.html#setting-up-the-environment">Setting up the environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="running.html#running-the-dashboard">Running the dashboard</a></li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Twitter Analytics</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+    <li>Dashboard Website</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/dashboard_website.rst.txt" rel="nofollow">
+                <span class="fa fa-binoculars"></span>&#32;View page source
+            </a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody" class="toBeIndexed">
+            
+  <div class="section" id="dashboard-website">
+<h1>Dashboard Website<a class="headerlink" href="#dashboard-website" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="major-parts-of-the-dashboard-website">
+<h2>Major parts of the dashboard website<a class="headerlink" href="#major-parts-of-the-dashboard-website" title="Permalink to this headline">¶</a></h2>
+<p>We have organised the dashboard website into tabs with each tab containing associated APIs and functionality. Each tab is futher divided into sub tabs. We enlist the major tabs and subtabs and the functionality contained there in, to give an overview of the hierarchy of the website.</p>
+<div class="section" id="hashtags">
+<h3>Hashtags<a class="headerlink" href="#hashtags" title="Permalink to this headline">¶</a></h3>
+<p>This tab contains the functionality to view major statistics associated with hashtags. Though as we will see, the functionality in this tab can entirely be emulated by creating a suitable DAG, but we choose to keep a separate option to get some common stats about the common entities like hastags, user mentions and urls.</p>
+<p>The Hashtags tab contains three subtabs:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Top 10 : Takes as inputs the start time and the end time, to output the 10 most popular hashtags in the said interval with the number of tweets containing the hashtag</li>
+<li>Usage Plot : Takes as input a hashtag, start time and end time, to output the plot of how the usage(as number of tweets in which the hashtag occurs) of the hashtag has changed over the interval.</li>
+<li>Sentiment Plot : Takes as input a hashtag, start time and end time, to output the plot of how the sentiment associated with the hashtag has changed over the interval.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="mentions">
+<h3>Mentions<a class="headerlink" href="#mentions" title="Permalink to this headline">¶</a></h3>
+<p>The Mentions tab contains the major statistics concerning user mentions. It has the follwoing three subtabs:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Top 10 : Takes as inputs the start time and the end time, to output the 10 most popular users in the said interval with the number of tweets in which the user is mentioned.</li>
+<li>Usage Plot : Takes as input a user, start time and end time, to output the plot of how the mention frequency(as number of tweets in which the user is mentioned) of the user has changed over the interval.</li>
+<li>Sentiment Plot : Takes as input a user, start time and end time, to output the plot of how the sentiment associated with the user has changed over the interval.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="urls">
+<h3>URLs<a class="headerlink" href="#urls" title="Permalink to this headline">¶</a></h3>
+<p>The URLs tab contains the major statistics concerning urls. It has the follwoing three subtabs:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Top 10 : Takes as inputs the start time and the end time, to output the 10 most popular urls in the said interval with the number of tweets containing the url.</li>
+<li>Usage Plot : Takes as input a url, start time and end time, to output the plot of how the usage(as number of tweets in which the url occurs) of the url has changed over the interval.</li>
+<li>Sentiment Plot : Takes as input a url, start time and end time, to output the plot of how the sentiment associated with the url has changed over the interval.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="alerts">
+<h3>Alerts<a class="headerlink" href="#alerts" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="dag">
+<h3>DAG<a class="headerlink" href="#dag" title="Permalink to this headline">¶</a></h3>
+<p>We expalin about DAGs in detail in section <a class="reference internal" href="dag.html#composing-multiple-queries-dag"><span class="std std-ref">Composing multiple queries : DAG</span></a>. We assume the reader has read though the section and is aware with the terminology.</p>
+<p>This tab contains the functionalities to create and view DAGs. It has the following subtabs:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Create Neo4j Query : Contains the APIs to create a neo4j queries. The user provides the inputs for query cration thorugh a simple form.</li>
+<li>Create MongoDB Query : Contains the APIs to create mongoDB queries.</li>
+<li>Create Post-Processing Function: Contains the APIs to create a post processing function. The form contains a file upload field thorugh which the file containing the python code for the function needs to be uploaded.</li>
+<li>All Queries : A color coded list of all queries created by the user, along with their input and output variables names. The user can delete queries from here.</li>
+<li>Create DAG : Compose the queries seen in the list of queries to create a DAG. The structure need to be specified in a file which needs to be uploaded.</li>
+<li>View DAG : Contains a list of DAGs created by the user. Also contains a button through which the user can go the airflow dashboard. Apart from that, with each DAG there is a “View” button which redirects to a page containg the strucutre code and the plotly graph of the DAG.</li>
+<li>Create Custom Metric : Contains a form in which the user needs to specify a DAG and a post processing function to create metric and view it either in plot/graph format.</li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="use-cases">
+<h2>Use Cases<a class="headerlink" href="#use-cases" title="Permalink to this headline">¶</a></h2>
+<p>Here we walk through some major use cases of the system with snapshots to give the reader some headway on how to use the system. The system has been designed, keeping in mind that the end user may not be much proficient in computer technology and has been strucutured to be intuitive and simple. Nonetheless, the authors feel that these use case should be enough to get the user started.</p>
+<p>Also, please notice that the easlier use cases may be used in the later ones. So it’s better the reader goes through these in order.</p>
+<div class="section" id="viewing-top-10-popular-hashtags">
+<h3>Viewing top 10 popular hashtags<a class="headerlink" href="#viewing-top-10-popular-hashtags" title="Permalink to this headline">¶</a></h3>
+<p>Go to the Hashtags/Top 10, enter the required fields. The list of top 10 most popular hahstags will be displayed below.</p>
+<p><a class="reference internal" href="_images/hash1.png"><img alt="pic1" src="_images/hash1.png" style="width: 341.5px; height: 192.0px;" /></a>  <a class="reference internal" href="_images/hash2.png"><img alt="pic2" src="_images/hash2.png" style="width: 341.5px; height: 192.0px;" /></a></p>
+<p>Lets take a hashtag and view its statsitics in below couple of use cases.</p>
+</div>
+<div class="section" id="viewing-usage-history-of-hashtag">
+<h3>Viewing usage history of  hashtag<a class="headerlink" href="#viewing-usage-history-of-hashtag" title="Permalink to this headline">¶</a></h3>
+<p>Let’s see how the usage of hashtag “GOT7” has changed over a period of 2 days.</p>
+<a class="reference internal image-reference" href="_images/hash3.png"><img alt="_images/hash3.png" src="_images/hash3.png" style="width: 546.4px; height: 307.20000000000005px;" /></a>
+</div>
+<div class="section" id="viewing-sentiment-history-of-hashtag">
+<h3>Viewing sentiment history of  hashtag<a class="headerlink" href="#viewing-sentiment-history-of-hashtag" title="Permalink to this headline">¶</a></h3>
+<p>Let’s see how the sentiment about hashtag “GOT7” has changed over the same period of 2 days.</p>
+<a class="reference internal image-reference" href="_images/hash4.png"><img alt="_images/hash4.png" src="_images/hash4.png" style="width: 546.4px; height: 307.20000000000005px;" /></a>
+</div>
+<div class="section" id="creating-a-mongodb-query">
+<h3>Creating a mongoDB query<a class="headerlink" href="#creating-a-mongodb-query" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Let’s create a mongo DB query named “most_popular_hashtags_20” to give us the 20 most popular hashtags. Specify the variables and click “create” to create the query.</p>
+<a class="reference internal image-reference" href="_images/mongo1.png"><img alt="_images/mongo1.png" src="_images/mongo1.png" style="width: 546.4px; height: 307.20000000000005px;" /></a>
+</div></blockquote>
+<p>Similarly other mongoDB queries can be created.</p>
+</div>
+<div class="section" id="creating-neo4j-queries">
+<h3>Creating neo4j queries<a class="headerlink" href="#creating-neo4j-queries" title="Permalink to this headline">¶</a></h3>
+<p>To crate a neo4j query we need to create user and tweet entities and relationships between them. Here we show how to create the neo4j to get userIds and their tweet counts who have used one of the hashtags from a list of hashtags atleast once and have tweeted with one of the popular user mentions from a list of userIds atleast once, mentioned in <a class="reference internal" href="dag.html#building-a-dag-from-queries"><span class="std std-ref">Building a DAG from queries</span></a>.</p>
+<p>Create a user variable named user with no attributes. Also create a user variable named user_mentioned having variable attribute {um_id}. The curly braces specify that the attribute is variable.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="_images/neo1.png"><img alt="_images/neo1.png" src="_images/neo1.png" style="width: 546.4px; height: 307.20000000000005px;" /></a>
+</div></blockquote>
+<p>Let us now create some tweets. Create a tweet named t1 having variable hashtag {hashtag}. Create a tweet t2 which has a mention of user User_mentioned, which was created above. Also, create a tweet t3 having no attributes.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="_images/neo2.png"><img alt="_images/neo2.png" src="_images/neo2.png" style="width: 546.4px; height: 307.20000000000005px;" /></a>
+</div></blockquote>
+<p>Lets now create some relation ships. Create the relationships, user tweeted tweet t1, user tweeted tweet t2 and user tweeted t3.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="_images/neo3.png"><img alt="_images/neo3.png" src="_images/neo3.png" style="width: 546.4px; height: 307.20000000000005px;" /></a>
+</div></blockquote>
+<p>So finally we have 2 user variables, 3 tweet variables and 3 relationships between the entities. This can be seen in this image where a screenshot of the tweets and relationships listing is shown.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="_images/neo4.png"><img alt="_images/neo4.png" src="_images/neo4.png" style="width: 546.4px; height: 307.20000000000005px;" /></a>
+</div></blockquote>
+<p>To create the query specify the return variables and the query name.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="_images/neo5.png"><img alt="_images/neo5.png" src="_images/neo5.png" style="width: 546.4px; height: 307.20000000000005px;" /></a>
+</div></blockquote>
+</div>
+<div class="section" id="create-post-processing-function">
+<h3>Create Post processing function<a class="headerlink" href="#create-post-processing-function" title="Permalink to this headline">¶</a></h3>
+<p>Select a file containing the python code to create a post processing function</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="_images/pp1.png"><img alt="_images/pp1.png" src="_images/pp1.png" style="width: 546.4px; height: 307.20000000000005px;" /></a>
+</div></blockquote>
+</div>
+<div class="section" id="view-queries">
+<h3>View Queries<a class="headerlink" href="#view-queries" title="Permalink to this headline">¶</a></h3>
+<p>To view the queries navigate to DAG/All Queries. As you can see here, currently we have 4 queries, 2 mongo DB and 1 neo4j and 1 post processing function. Additionally, you can see the cypher code generated for the neo4j query and the code of the post processing function in this screenshot:</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="_images/queries2.png"><img alt="_images/queries2.png" src="_images/queries2.png" style="width: 546.4px; height: 307.20000000000005px;" /></a>
+</div></blockquote>
+</div>
+<div class="section" id="create-dag">
+<h3>Create DAG<a class="headerlink" href="#create-dag" title="Permalink to this headline">¶</a></h3>
+<p>Now let us create the DAG to get the most active users as mentioned in <a class="reference internal" href="dag.html#building-a-dag-from-queries"><span class="std std-ref">Building a DAG from queries</span></a>.
+Input the name of the DAG as “activer_users_dag”, optionally the description and the file containing the structure specification of the DAG.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="_images/dag1.png"><img alt="_images/dag1.png" src="_images/dag1.png" style="width: 546.4px; height: 307.20000000000005px;" /></a>
+</div></blockquote>
+</div>
+<div class="section" id="view-dags">
+<h3>View DAGs<a class="headerlink" href="#view-dags" title="Permalink to this headline">¶</a></h3>
+<p>Navigate to the View DAG subtab to view all the created DAGs.</p>
+<a class="reference internal image-reference" href="_images/dag2.png"><img alt="_images/dag2.png" src="_images/dag2.png" style="width: 546.4px; height: 307.20000000000005px;" /></a>
+<p>We can view a DAG by clicking “View” button against it. You can see how outputs from one query are feeding into the inputs of another query. Beneath in the screenshot you can see the structure of the DAG in code as well.</p>
+<a class="reference internal image-reference" href="_images/dag3.png"><img alt="_images/dag3.png" src="_images/dag3.png" style="width: 546.4px; height: 307.20000000000005px;" /></a>
+<p>Now let us view our DAG in airflow. Here you can see the tree view and the graph view of the DAG.</p>
+<p><a class="reference internal" href="_images/dag5.png"><img alt="pic3" src="_images/dag5.png" style="width: 341.5px; height: 192.0px;" /></a>  <a class="reference internal" href="_images/dag6.png"><img alt="pic4" src="_images/dag6.png" style="width: 341.5px; height: 192.0px;" /></a></p>
+<p>Execute the DAG in airflow and navigate to XComs list to see the outputs of all the queries. A screensot of the XComs list is provided here.</p>
+<a class="reference internal image-reference" href="_images/dag7.png"><img alt="_images/dag7.png" src="_images/dag7.png" style="width: 546.4px; height: 307.20000000000005px;" /></a>
+</div>
+<div class="section" id="create-custom-metric">
+<h3>Create Custom metric<a class="headerlink" href="#create-custom-metric" title="Permalink to this headline">¶</a></h3>
+<p>To create the custom metric, we need to specify the DAG which we want to execute, choose a post processing function which outputs the x and y coordinates and create a mapping between the outputs of the DAG and inputs of the post processing function. Shown here is how to create a custom metric on the most active users DAG to plot the 10 top active user Ids with their number of tweets:</p>
+<a class="reference internal image-reference" href="_images/cm1.png"><img alt="_images/cm1.png" src="_images/cm1.png" style="width: 546.4px; height: 307.20000000000005px;" /></a>
+<p>When you click Fetch data the DAG will be executed to feed data into the post processing function. You can now view in a plot or table format by clicking on “PLOT GRAPH!” and “CREATE TABLE!” respectively. The table will look something like this:</p>
+<a class="reference internal image-reference" href="_images/cm2.png"><img alt="_images/cm2.png" src="_images/cm2.png" style="width: 546.4px; height: 307.20000000000005px;" /></a>
+</div>
+<div class="section" id="create-alert">
+<h3>Create Alert<a class="headerlink" href="#create-alert" title="Permalink to this headline">¶</a></h3>
+<p>To create an alert on the tweet stream, we need to specify the alert name, the filter, choose keys on which to group and partition the tweet stream, the window length, the window slide and the count threshold. Let’s create a hashtag “viral_hashtags” to notify when a hashtag frequency exceeds 3 in the past window of 60 seconds, the window sliding ahead by 30 seconds.</p>
+<a class="reference internal image-reference" href="_images/alerts1.png"><img alt="_images/alerts1.png" src="_images/alerts1.png" style="width: 546.4px; height: 307.20000000000005px;" /></a>
+</div>
+<div class="section" id="view-alerts">
+<h3>View Alerts<a class="headerlink" href="#view-alerts" title="Permalink to this headline">¶</a></h3>
+<p>The alerts are generated as real time tweets are put into the kafka queue.</p>
+<a class="reference internal image-reference" href="_images/alerts2.png"><img alt="_images/alerts2.png" src="_images/alerts2.png" style="width: 546.4px; height: 307.20000000000005px;" /></a>
+<p>In the end, the best way to figure out the system is to get your hands dirty with the system! To get the system on your local system, the reader should see <a class="reference internal" href="running.html#getting-the-system-running"><span class="std std-ref">Getting the system running</span></a></p>
+</div>
+</div>
+</div>
+
+
+           </div><!-- /.toBeIndexed -->
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="running.html" class="btn btn-neutral float-right" title="Accesskey Alt(+Shift)+n" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="benchmarking.html" class="btn btn-neutral" title="Accesskey Alt(+Shift)+p" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo" class="contentinfo">
+      <p class="show_source">
+        <a href="_sources/dashboard_website.rst.txt" rel="nofollow">
+          <span class="fa fa-binoculars"></span>&#32;View page source
+        </a>
+      </p>
+      <p class="show_copyright">
+            &copy; Copyright 2018, Deepak Saini, Abhishek Gupta
+      </p>
+      <p class="show_sphinx">
+        Built with <a href="http://sphinx-doc.org/" target="_blank">Sphinx</a> and
+        <a href="https://github.com/TYPO3-Documentation/t3SphinxThemeRtd" target="_blank">t3SphinxThemeRtd.</a>
+        Report theme issues <a href="https://github.com/TYPO3-Documentation/t3SphinxThemeRtd/issues" target="_blank">here.</a>
+      </p>
+      <p class="show_legalinfo">
+        <a href="https://typo3.org/legal-info/" rel="nofollow">
+          <span class="fa fa-legal"></span>&#32;Legal Info
+        </a>
+      </p>
+
+
+
+
+  </div>
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="_static/jquery-ui/jquery-ui.min.js"></script>
+      <script type="text/javascript" src="_static/js/theme.js"></script>
+      <script type="text/javascript" src="_static/js/t3autocomplete.js"></script>
+
+  
+
+  
+   
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   <script type="text/javascript" id="idPiwikScriptPlaceholder"></script></body>
+</html>
