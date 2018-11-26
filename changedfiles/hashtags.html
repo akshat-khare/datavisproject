@@ -1,0 +1,304 @@
+{% load static %}
+<div>
+{% include "myapp/theme.html" %}
+</div>
+
+{% load crispy_forms_tags %}
+
+{% include 'material/includes/material_css.html' %}
+<script src="{% static 'material/js/jquery.js' %}"></script>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+{% include 'material/includes/material_js.html' %}
+{% load material_form %}
+
+{% block head %}
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hashtags</title>
+
+    <style type="text/css">
+      html, body {
+          background: #eee;
+          height: 100%;
+      }
+    </style>
+
+    <style type="text/css">
+    .heading {
+         width: 100%;
+         text-align: center;
+         border-bottom: 1px solid #000;
+         line-height: 0.1em;
+         margin: 10px 0 20px;
+    }
+
+    .heading span {
+            background:#fff;
+            padding:0 10px;
+    }
+    </style>
+</head>
+
+{% endblock %}
+
+{% block body %}
+
+<div class="container-fluid">
+	<ul class="nav nav-tabs">
+	  <li class="active"><a id="tab1" data-toggle="tab" href="#usageplot">Usage Plot</a></li>
+	  <li><a id="tab2" data-toggle="tab" href="#top10">Top 10</a></li>
+	  <li><a id="tab3" data-toggle="tab" href="#sentiment">Sentiment Analysis</a></li>
+	</ul>
+
+	<div class="tab-content">
+
+		<div id="usageplot" class="tab-pane fade in active">
+			<h5>Analyze a hashtag's usage history</h5>
+            <div class="valign-wrapper2">
+                <div class="container expand-on-small-only">
+                    <div class="row valign change-form">
+                        <div class="col s12 m8 offset-m2 l8 offset-l2">
+                            <div class="card" style="width:100%;padding-left:45px;padding-right:45px;padding-bottom:45px;padding-top:45px;">
+                			<form id="usageform" method="post" action="hashtag_usage_getter/">{% csrf_token %}
+                			    {% form form=usage_form %}{% endform %}
+                			    <br>
+                			    <button type="submit" class="btn btn-primary">Plot!</button>
+                			</form>
+                			<div id="usage_plot">
+                				<!-- Plotly chart will be drawn inside this DIV -->
+                			</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+		</div>
+
+		<div id="top10" class="tab-pane fade">
+			<h5>View top 10 hashtags in history</h5>
+            <div class="valign-wrapper2">
+                <div class="container expand-on-small-only">
+                    <div class="row valign change-form">
+                        <div class="col s12 m8 offset-m2 l8 offset-l2">
+                            <div class="card" style="width:100%;padding-left:45px;padding-right:45px;padding-bottom:45px;padding-top:45px;">
+                			<form id="top10form" method="post" action="hashtag_top10_getter/">{% csrf_token %}
+                				{% form form=top10_form %}{% endform %}
+                			    <br>
+                			    <button type="submit" class="btn btn-primary">Submit!</button>
+                			</form>
+                			<br>
+                			<div class="row">
+            				<div id="top10list" >
+            					<!-- Top 10 hashtags list will be drawn inside this DIV -->
+            				</div>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+               </div>
+		    </div>
+		</div>
+<svg width="960" height="960" font-family="sans-serif" font-size="10" text-anchor="middle"></svg>
+		<div id="sentiment" class="tab-pane fade">
+			<h5>Analyze a hashtag's sentiment history</h5>
+            <div class="valign-wrapper2">
+                <div class="container expand-on-small-only">
+                    <div class="row valign change-form">
+                        <div class="col s12 m8 offset-m2 l8 offset-l2">
+                            <div class="card" style="width:100%;padding-left:45px;padding-right:45px;padding-bottom:45px;padding-top:45px;">
+                			<form id="sentimentform" method="post" action="hashtag_sentiment_getter/">{% csrf_token %}
+                                {% form form=sentiment_form %}{% endform %}
+                			    <br>
+                			    <button type="submit" class="btn btn-primary">Plot!</button>
+                			</form>
+                			<div id="sentiment_plot">
+                				<!-- Plotly chart will be drawn inside this DIV -->
+                			</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+		</div>
+
+	</div>
+
+</div>
+
+
+
+<script type="text/javascript">
+	$(function(){
+	    $("#hashtags_tab").addClass("active");
+	    $("#mentions_tab").removeClass("active");
+	    $("#urls_tab").removeClass("active");
+	    // $("#custom_metrics_tab").removeClass("active");
+	    $("#alerts_tab").removeClass("active");
+	    $("#create_query_tab").removeClass("active");
+	});
+</script>
+
+<script type="text/javascript">
+	function plot(x_, y_,title_,x_label,y_label,div_id) {
+		var data = [{
+			x: x_,
+			y: y_,
+			type: 'line'
+		}];
+		var layout = {
+			title: title_,
+			xaxis: {
+				title: x_label,
+				// showgrid: false,
+				zeroline: false
+			},
+			yaxis: {
+				title: y_label,
+				// showline: false
+			}
+		};
+		$("#"+div_id).html("");
+		Plotly.newPlot(div_id, data, layout);
+	}
+</script>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+	    var frm = $('#usageform');
+	    frm.submit(function() {
+	        $.ajax({
+	            type: frm.attr('method'),
+	            url: frm.attr('action'),
+	            data: frm.serialize(),
+	            success: function (data) {
+	            	var hashtag_name = frm.find('input[name="hashtag"]').val();
+	            	console.log(data);
+	            	plot(data.x, data.y,'Usage vs Time for hashtag: '+hashtag_name,'Time','Count','usage_plot');
+	            },
+	            error: function(data) {
+	                $("#usage_plot").html("Something went wrong!");
+	            }
+	        });
+	        return false;
+	    });
+    });
+</script>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+	    var frm = $('#top10form');
+	    frm.submit(function() {
+	        $.ajax({
+	            type: frm.attr('method'),
+	            url: frm.attr('action'),
+	            data: frm.serialize(),
+	            success: function (data) {
+	            	trHTML = '<ul class="list-group">';
+	            	$.each(data, function (i, item) {
+			            trHTML += '<li class="list-group-item">' + item.hashtag + '<span class="badge" style="color:white">' + item.count.toString() + '</span></li>';
+			        });
+	            	trHTML += '</ul>'
+	            	console.log(data);
+	            	console.log(trHTML);
+	            	$('#top10list').html(trHTML);
+	            	// $("svg").append('<ellipse cx="210" cy="45" rx="170" ry="15" style="fill:yellow" />' );
+	            	// d3.select("svg").append('<ellipse cx="210" cy="45" rx="170" ry="15" style="fill:yellow" />');
+	            	// d3.select("svg").append("circle").attr("cx", 30).attr("cy", 30).attr("r", 20);
+
+
+	            	var svg = d3.select("svg"),
+					    width = +svg.attr("width"),
+					    height = +svg.attr("height");
+
+					var format = d3.format(",d");
+
+					var color = d3.scaleOrdinal(d3.schemeCategory20c);
+
+					var pack = d3.pack()
+					    .size([width, height])
+					    .padding(1.5);
+
+					var classes = data;
+
+					var root = d3.hierarchy({children: classes})
+					      .sum(function(d) { return d.count; })
+					      .each(function(d) {
+					        if (hashtag = d.data.hashtag) {
+					          var hashtag, i = hashtag.lastIndexOf(".");
+					          d.hashtag = hashtag;
+					          d.package = hashtag.slice(0, i);
+					          d.class = hashtag.slice(i + 1);
+					        }
+					      });
+
+					  var node = svg.selectAll(".node")
+					    .data(pack(root).leaves())
+					    .enter().append("g")
+					      .attr("class", "node")
+					      .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+
+					  node.append("circle")
+					      .attr("hashtag", function(d) { return d.hashtag; })
+					      .attr("r", function(d) { return d.r; })
+					      .style("fill", function(d) { return color(d.package); });
+
+					  node.append("clipPath")
+					      .attr("hashtag", function(d) { return "clip-" + d.hashtag; })
+					    .append("use")
+					      .attr("xlink:href", function(d) { return "#" + d.hashtag; });
+
+					  node.append("text")
+					      .attr("clip-path", function(d) { return "url(#clip-" + d.hashtag + ")"; })
+					    .selectAll("tspan")
+					    .data(function(d) { return d.class.split(/(?=[A-Z][^A-Z])/g); })
+					    .enter().append("tspan")
+					      .attr("x", 0)
+					      .attr("y", function(d, i, nodes) { return 13 + (i - nodes.length / 2 - 0.5) * 10; })
+					      .text(function(d) { return d; });
+
+					  node.append("title")
+					      .text(function(d) { return d.hashtag + "\n" + format(d.count); });
+					
+
+
+
+
+
+
+
+	            },
+	            error: function(data) {
+	                $("#top10list").html("Something went wrong!");
+	            }
+	        });
+	        return false;
+	    });
+    });
+</script>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+	    var frm = $('#sentimentform');
+	    frm.submit(function() {
+	        $.ajax({
+	            type: frm.attr('method'),
+	            url: frm.attr('action'),
+	            data: frm.serialize(),
+	            success: function (data) {
+	            	var hashtag_name = frm.find('input[name="hashtag"]').val();
+	            	console.log(data);
+	            	plot(data.x, data.y,'Sentiment vs Time for hashtag: '+hashtag_name,'Time','Sentiment','sentiment_plot');
+	            },
+	            error: function(data) {
+	                $("#sentiment_plot").html("Something went wrong!");
+	            }
+	        });
+	        return false;
+	    });
+    });
+</script>
+
+{% endblock %}
